@@ -1,22 +1,28 @@
-import React from "react";
+// app/notes/page.tsx
+import { getNotes } from "@/lib/api";
+import NoteList from "@/components/NoteList/NoteList";
 
-const notes = [
-    { id: 1, title: "First Note", content: "This is your first note." },
-    { id: 2, title: "Second Note", content: "This is your second note." },
-];
+type SearchParams = { categoryId?: string };
 
-export default function NotesPage() {
-    return (
-        <main>
-            <h1>Notes</h1>
-            <ul>
-                {notes.map(note => (
-                    <li key={note.id}>
-                        <h2>{note.title}</h2>
-                        <p>{note.content}</p>
-                    </li>
-                ))}
-            </ul>
-        </main>
-    );
+export default async function NotesPage({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
+  const categoryId = searchParams?.categoryId;
+  const data = await getNotes(categoryId);
+
+  return (
+    <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
+      <header style={{ display: "flex", alignItems: "center", gap: 16, margin: "12px 0 24px" }}>
+        <h1 style={{ fontSize: 32, margin: 0 }}>Notes List</h1>
+      </header>
+
+      {data.notes.length > 0 ? (
+        <NoteList notes={data.notes} />
+      ) : (
+        <p>Нотаток немає</p>
+      )}
+    </section>
+  );
 }
